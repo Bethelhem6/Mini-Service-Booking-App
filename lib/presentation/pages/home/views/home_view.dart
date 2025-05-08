@@ -496,22 +496,24 @@ Widget _buildLanguageTile(BuildContext context) {
     leading: const Icon(Icons.language),
     title: Text('language'.tr),
     children: [
-      // Language selection
-      RadioListTile(
+       RadioListTile(
         title: Text('english'.tr),
         value: 'en',
         groupValue: languageController.language,
         onChanged: (value) {
           languageController.changeLanguage(value.toString());
+          Get.forceAppUpdate(); // Force UI to update
           Navigator.pop(context);
         },
       ),
+    
       RadioListTile(
-        title: Text('spanish'.tr),
-        value: 'es',
+        title: Text('amharic'.tr),
+        value: 'am',
         groupValue: languageController.language,
         onChanged: (value) {
           languageController.changeLanguage(value.toString());
+          Get.forceAppUpdate();
           Navigator.pop(context);
         },
       ),
