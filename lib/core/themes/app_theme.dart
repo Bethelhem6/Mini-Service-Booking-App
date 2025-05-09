@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static TextTheme lightTextTheme = TextTheme(
+    
     displayLarge: GoogleFonts.poppins(
       fontSize: 97,
       fontWeight: FontWeight.w300,
@@ -149,7 +150,7 @@ class AppTheme {
   );
 
   static final lightTheme = ThemeData(
-    primarySwatch: Colors.red,
+    primarySwatch: Colors.orange,
     brightness: Brightness.light,
     textTheme: lightTextTheme,
     appBarTheme: AppBarTheme(
@@ -169,7 +170,7 @@ class AppTheme {
   );
 
   static final darkTheme = ThemeData(
-    primarySwatch: Colors.blue,
+    primarySwatch: Colors.orange,
     brightness: Brightness.dark,
     textTheme: darkTextTheme,
     appBarTheme: AppBarTheme(

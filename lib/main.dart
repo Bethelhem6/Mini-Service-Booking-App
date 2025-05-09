@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      
       title: 'Service Booking App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,

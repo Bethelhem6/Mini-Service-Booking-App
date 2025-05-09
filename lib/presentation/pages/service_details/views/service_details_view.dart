@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mini_service_booking_app/core/constants/app_colors.dart';
 import 'package:mini_service_booking_app/presentation/pages/service_details/controllers/service_details_controller.dart';
 
 class ServiceDetailsView extends GetView<ServiceDetailsController> {
@@ -8,7 +9,7 @@ class ServiceDetailsView extends GetView<ServiceDetailsController> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primaryColor = theme.colorScheme.primary;
+    final primaryColor = AppColors.primaryColor;
 
     return Scaffold(
       appBar: AppBar(
@@ -121,7 +122,6 @@ class ServiceDetailsView extends GetView<ServiceDetailsController> {
                             text: '${service.duration} min',
                             color: theme.colorScheme.tertiaryContainer,
                           ),
-                          
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -172,10 +172,7 @@ class ServiceDetailsView extends GetView<ServiceDetailsController> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        service.category,
-                        style: theme.textTheme.bodyMedium,
-                      ),
+                      Text(service.category, style: theme.textTheme.bodyMedium),
                       const SizedBox(height: 80), // Space for bottom button
                     ]),
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mini_service_booking_app/core/constants/app_colors.dart';
 import 'package:mini_service_booking_app/presentation/pages/service_details/controllers/service_form_controller.dart';
 
 class ServiceFormView extends GetView<ServiceFormController> {
@@ -8,7 +9,7 @@ class ServiceFormView extends GetView<ServiceFormController> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primaryColor = theme.primaryColor;
+    final primaryColor = AppColors.primaryColor;
 
     return Scaffold(
       appBar: AppBar(
@@ -123,7 +124,7 @@ class ServiceFormView extends GetView<ServiceFormController> {
                 decoration: InputDecoration(
                   hintText: '0.00',
                   hintStyle: TextStyle(color: Colors.grey[400]),
-                  prefixText: '\ETB ',
+                  prefixText: 'ETB ',
                   filled: true,
                   fillColor: Colors.grey[100],
                   border: OutlineInputBorder(
@@ -231,6 +232,7 @@ class ServiceFormView extends GetView<ServiceFormController> {
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: SwitchListTile(
+                    activeColor: primaryColor,
                     title: Text(
                       'Availability',
                       style: theme.textTheme.bodyMedium,

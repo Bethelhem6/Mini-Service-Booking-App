@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mini_service_booking_app/core/constants/app_colors.dart';
 import 'package:mini_service_booking_app/domain/entities/service.dart';
 import 'package:mini_service_booking_app/presentation/controllers/language_controller.dart';
 import 'package:mini_service_booking_app/presentation/pages/home/controllers/home_controller.dart';
@@ -12,7 +13,7 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primaryColor = theme.primaryColor;
+    final primaryColor = AppColors.primaryColor;
     final textTheme = theme.textTheme;
 
     return Scaffold(

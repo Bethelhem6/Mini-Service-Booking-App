@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mini_service_booking_app/core/constants/app_colors.dart';
 import 'package:mini_service_booking_app/presentation/pages/login/controllers/login_controller.dart';
 
 class LoginView extends GetView<LoginController> {
@@ -106,7 +107,7 @@ class LoginView extends GetView<LoginController> {
                     onPressed:
                         controller.isLoading.value ? null : controller.login,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
+                      backgroundColor: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

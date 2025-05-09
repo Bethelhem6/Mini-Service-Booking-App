@@ -18,7 +18,11 @@ class AppTranslations extends Translations {
       'english': 'English',
       'spanish': 'Español',
       'promotions': 'Promotions',
-
+      'addService': "Add Service",
+      'serviceDetails':'Service Details',
+      'description': 'Description',
+      'available': 'Available',
+      'notAvailable': 'Not Available',
       // Service card translations
       'price': 'ETB@price',
       'rating': '@rating',
@@ -127,10 +131,11 @@ class AppTranslations extends Translations {
       'minutes': 'minutes',
       'day': 'day',
       'days': 'days',
-      'language':"Language"
+      'language': "Language",
     },
     'am_ET': {
       'serviceBooking': 'አገልግሎት ቦታ ማስያዝ',
+      'addService': "Add Service",
       'searchServices': 'አገልግሎቶችን ፈልግ...',
       'categories': 'ምድቦች',
       'availableServices': 'የሚገኙ አገልግሎቶች',
@@ -249,8 +254,11 @@ class AppTranslations extends Translations {
       'minutes': 'ደቂቃዎች',
       'day': 'ቀን',
       'days': 'ቀናት',
-      'language':'Language'
-
-    }
+      'language': 'Language',
+      'serviceDetails': 'Service Details',
+      'description': 'Description',
+      'available': 'Available',
+      'notAvailable': 'Not Available',
+    },
   };
 }

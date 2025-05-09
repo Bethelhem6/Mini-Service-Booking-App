@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mini_service_booking_app/core/constants/app_colors.dart';
 import 'package:mini_service_booking_app/core/routes/app_pages.dart';
 import 'package:mini_service_booking_app/domain/entities/service.dart';
 import 'package:mini_service_booking_app/domain/usecases/base_usecase.dart';
@@ -57,7 +58,7 @@ class HomeController extends GetxController {
   // Add this getter for dropdown
   List<String> get categoryNames =>
       ['All', ...categories.map((c) => c['name'] as String)].toList();
-      final currentPromoIndex = 0.obs;
+  final currentPromoIndex = 0.obs;
   final isSwiping = false.obs;
   // Promotions for the carousel
   final promotions =
@@ -216,7 +217,7 @@ class HomeController extends GetxController {
 
   void showFilterDialog() {
     final theme = Theme.of(Get.context!);
-    final primaryColor = theme.primaryColor;
+    final primaryColor = AppColors.primaryColor;
 
     Get.dialog(
       AlertDialog(
