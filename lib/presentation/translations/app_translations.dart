@@ -132,6 +132,7 @@ class AppTranslations extends Translations {
       'day': 'day',
       'days': 'days',
       'language': "Language",
+      'amharic': 'አማርኛ',
     },
     'am_ET': {
       'serviceBooking': 'አገልግሎት ቦታ ማስያዝ',
@@ -259,6 +260,8 @@ class AppTranslations extends Translations {
       'description': 'Description',
       'available': 'Available',
       'notAvailable': 'Not Available',
+      'amharic': 'አማርኛ',
+
     },
   };
 }

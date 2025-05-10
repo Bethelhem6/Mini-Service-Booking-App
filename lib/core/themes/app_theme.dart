@@ -2,190 +2,158 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
+  // Define your orange color palette
+  static const Color primaryOrange = Color.fromARGB(255, 241, 140, 8);
+  static const Color darkOrange = Color(0xFFE65100); // Darker shade
+  static const Color lightOrange = Color(0xFFFF9E40); // Lighter shade
+  static const Color accentOrange = Color(0xFFFFAB40); // Accent shade
+
   static TextTheme lightTextTheme = TextTheme(
-    
-    displayLarge: GoogleFonts.poppins(
-      fontSize: 97,
-      fontWeight: FontWeight.w300,
-      letterSpacing: -1.5,
-    ),
-    displayMedium: GoogleFonts.poppins(
-      fontSize: 61,
-      fontWeight: FontWeight.w300,
-      letterSpacing: -0.5,
-    ),
-    displaySmall: GoogleFonts.poppins(
-      fontSize: 48,
-      fontWeight: FontWeight.w400,
-    ),
-    headlineMedium: GoogleFonts.poppins(
-      fontSize: 34,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.25,
-    ),
-    headlineSmall: GoogleFonts.poppins(
-      fontSize: 24,
-      fontWeight: FontWeight.w400,
-    ),
-    titleLarge: GoogleFonts.poppins(
-      fontSize: 20,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.15,
-    ),
-    titleMedium: GoogleFonts.poppins(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.15,
-    ),
-    titleSmall: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.1,
-    ),
-    bodyLarge: GoogleFonts.poppins(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.5,
-    ),
-    bodyMedium: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.25,
-    ),
-    labelLarge: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 1.25,
-    ),
-    bodySmall: GoogleFonts.poppins(
-      fontSize: 12,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.4,
-    ),
-    labelSmall: GoogleFonts.poppins(
-      fontSize: 10,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 1.5,
-    ),
+    // ... keep your existing text theme ...
   );
 
-  // Dark text theme with Poppins
   static TextTheme darkTextTheme = TextTheme(
-    displayLarge: GoogleFonts.poppins(
-      fontSize: 97,
-      fontWeight: FontWeight.w300,
-      letterSpacing: -1.5,
-      color: Colors.white,
-    ),
-    displayMedium: GoogleFonts.poppins(
-      fontSize: 61,
-      fontWeight: FontWeight.w300,
-      letterSpacing: -0.5,
-      color: Colors.white,
-    ),
-    displaySmall: GoogleFonts.poppins(
-      fontSize: 48,
-      fontWeight: FontWeight.w400,
-      color: Colors.white,
-    ),
-    headlineMedium: GoogleFonts.poppins(
-      fontSize: 34,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.25,
-      color: Colors.white,
-    ),
-    headlineSmall: GoogleFonts.poppins(
-      fontSize: 24,
-      fontWeight: FontWeight.w400,
-      color: Colors.white,
-    ),
-    titleLarge: GoogleFonts.poppins(
-      fontSize: 20,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.15,
-      color: Colors.white,
-    ),
-    titleMedium: GoogleFonts.poppins(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.15,
-      color: Colors.white,
-    ),
-    titleSmall: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.1,
-      color: Colors.white,
-    ),
-    bodyLarge: GoogleFonts.poppins(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.5,
-      color: Colors.white,
-    ),
-    bodyMedium: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.25,
-      color: Colors.white,
-    ),
-    labelLarge: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 1.25,
-      color: Colors.white,
-    ),
-    bodySmall: GoogleFonts.poppins(
-      fontSize: 12,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.4,
-      color: Colors.white70,
-    ),
-    labelSmall: GoogleFonts.poppins(
-      fontSize: 10,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 1.5,
-      color: Colors.white70,
-    ),
+    // ... keep your existing dark text theme ...
   );
 
   static final lightTheme = ThemeData(
-    primarySwatch: Colors.orange,
+    colorScheme: ColorScheme.light(
+      primary: primaryOrange,
+      primaryContainer: darkOrange,
+      secondary: accentOrange,
+      secondaryContainer: lightOrange,
+      surface: Colors.white,
+      background: Colors.grey[200],
+      error: Colors.red,
+      onPrimary: Colors.white,
+      onSecondary: Colors.black,
+      onSurface: Colors.black,
+      onBackground: Colors.black,
+      onError: Colors.white,
+      brightness: Brightness.light,
+    ),
     brightness: Brightness.light,
+    primaryColor: primaryOrange,
+    primaryColorLight: lightOrange,
+    primaryColorDark: darkOrange,
     textTheme: lightTextTheme,
+
     appBarTheme: AppBarTheme(
       elevation: 0,
       centerTitle: true,
+      backgroundColor: Colors.white,
       titleTextStyle: GoogleFonts.poppins(
-        color: Colors.black87,
+        color: Colors.black,
         fontSize: 20,
         fontWeight: FontWeight.w600,
       ),
+      iconTheme: const IconThemeData(color: Colors.black),
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: primaryOrange,
+      foregroundColor: Colors.white,
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
       labelStyle: GoogleFonts.poppins(),
       hintStyle: GoogleFonts.poppins(),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: primaryOrange),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primaryOrange,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      ),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.selected)) {
+          return primaryOrange;
+        }
+        return Colors.grey;
+      }),
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.selected)) {
+          return primaryOrange;
+        }
+        return Colors.grey;
+      }),
     ),
   );
 
   static final darkTheme = ThemeData(
-    primarySwatch: Colors.orange,
+    colorScheme: ColorScheme.dark(
+      primary: primaryOrange,
+      primaryContainer: darkOrange,
+      secondary: accentOrange,
+      secondaryContainer: lightOrange,
+      surface: Colors.grey[850]!,
+      background: Colors.grey[900]!,
+      error: Colors.red[700]!,
+      onPrimary: Colors.white,
+      onSecondary: Colors.black,
+      onSurface: Colors.white,
+      onBackground: Colors.white,
+      onError: Colors.white,
+      brightness: Brightness.dark,
+    ),
     brightness: Brightness.dark,
+    primaryColor: primaryOrange,
+    primaryColorLight: lightOrange,
+    primaryColorDark: darkOrange,
     textTheme: darkTextTheme,
     appBarTheme: AppBarTheme(
       elevation: 0,
       centerTitle: true,
+      backgroundColor: Colors.grey[900],
       titleTextStyle: GoogleFonts.poppins(
         color: Colors.white,
         fontSize: 20,
         fontWeight: FontWeight.w600,
       ),
+      iconTheme: const IconThemeData(color: Colors.white),
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: primaryOrange,
+      foregroundColor: Colors.white,
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
       labelStyle: GoogleFonts.poppins(color: Colors.white70),
       hintStyle: GoogleFonts.poppins(color: Colors.white60),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: primaryOrange),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primaryOrange,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      ),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.selected)) {
+          return primaryOrange;
+        }
+        return Colors.grey;
+      }),
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.selected)) {
+          return primaryOrange;
+        }
+        return Colors.grey;
+      }),
     ),
   );
 }

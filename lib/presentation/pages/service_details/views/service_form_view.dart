@@ -15,7 +15,7 @@ class ServiceFormView extends GetView<ServiceFormController> {
       appBar: AppBar(
         title: Text(
           controller.isEditMode ? 'editService'.tr : 'addService'.tr,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         centerTitle: true,
         elevation: 0,
@@ -23,6 +23,10 @@ class ServiceFormView extends GetView<ServiceFormController> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Form(
+          autovalidateMode:
+              controller.isSubmitted.value
+                  ? AutovalidateMode.onUserInteraction
+                  : AutovalidateMode.disabled,
           key: controller.formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

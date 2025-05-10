@@ -15,6 +15,7 @@ class ServiceFormController extends GetxController {
 
   // Form key
   final formKey = GlobalKey<FormState>();
+  final isSubmitted = false.obs;
 
   // Controllers
   final nameController = TextEditingController();
@@ -70,6 +71,7 @@ class ServiceFormController extends GetxController {
   }
 
   Future<void> submitForm() async {
+    isSubmitted.value = true;
     if (!formKey.currentState!.validate()) return;
     if (selectedCategory.isEmpty) {
       Get.snackbar('Error', 'Please select a category');

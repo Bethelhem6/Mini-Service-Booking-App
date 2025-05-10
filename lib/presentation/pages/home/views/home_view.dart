@@ -19,10 +19,10 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'serviceBooking'.tr,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          'Hello👋, welcome to Helpster!',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
-        centerTitle: true,
+        centerTitle: false,
         // leading: Builder(
         //   builder:
         //       (context) => IconButton(
@@ -69,7 +69,7 @@ class HomeView extends GetView<HomeController> {
                         child: TextField(
                           controller: controller.searchController,
                           decoration: InputDecoration(
-                            hintText: 'Search services...',
+                            hintText: 'searchServices'.tr,
                             prefixIcon: const Icon(Icons.search),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -386,7 +386,7 @@ class HomeView extends GetView<HomeController> {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.grey[200],
                     child: Text(
                       'BM',
                       style: TextStyle(
@@ -416,7 +416,7 @@ class HomeView extends GetView<HomeController> {
                 ],
               ),
             ),
-            Divider(),
+            Divider(color: AppColors.grey300),
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -495,7 +495,7 @@ Widget _buildLanguageTile(BuildContext context) {
   final LanguageController languageController = Get.find();
 
   return ExpansionTile(
-    leading: const Icon(Icons.language),
+    leading: const Icon(Icons.language, color: AppColors.primaryColor),
     title: Text('language'.tr),
     children: [
       RadioListTile(
