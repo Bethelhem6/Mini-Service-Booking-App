@@ -45,14 +45,10 @@ class HomeView extends GetView<HomeController> {
       drawer: _buildDrawer(context),
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
-          if (scrollNotification.metrics.pixels ==
-              scrollNotification.metrics.maxScrollExtent) {
-            if (controller.hasNextPage) {
-              controller.nextPage();
-            }
-          }
+          controller.handleScroll(scrollNotification);
           return false;
         },
+
         child: Obx(() {
           if (controller.isLoading.value && controller.currentPage.value == 1) {
             return HomeShimmerLoading();
@@ -341,28 +337,30 @@ class HomeView extends GetView<HomeController> {
                           crossAxisSpacing: 16,
                           childAspectRatio: .7,
                         ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (index >= controller.paginatedServices.length) {
-                          return controller.hasNextPage
-                              ? Container(
-                                alignment: Alignment.center,
-                                child: CircularProgressIndicator(),
-                              )
-                              : const SizedBox();
-                        }
-                        final service = controller.paginatedServices[index];
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      if (index < controller.visibleServices.length) {
+                        final service = controller.visibleServices[index];
                         return ServiceCard(
                           service: service,
                           controller: controller,
                         );
-                      },
-                      childCount:
-                          controller.paginatedServices.length +
-                          (controller.hasNextPage ? 1 : 0),
-                    ),
+                      }
+                      return null;
+                    }, childCount: controller.visibleServices.length),
                   ),
                 ),
+              ),
+
+              // Add loading indicator at the bottom
+              SliverToBoxAdapter(
+                child: Obx(() {
+                  return controller.isLoadingMore.value
+                      ? const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                      : const SizedBox();
+                }),
               ),
             ],
           );
@@ -468,7 +466,7 @@ class HomeView extends GetView<HomeController> {
                     title: Text('settings'.tr),
                     onTap: () {},
                   ),
-                 
+
                   Obx(
                     () => SwitchListTile(
                       title: Text('Dark Mode'),

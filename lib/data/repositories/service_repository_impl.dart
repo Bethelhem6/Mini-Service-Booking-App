@@ -19,23 +19,39 @@ class ServiceRepositoryImpl implements ServiceRepository {
   });
 
   @override
-  Future<List<Service>> getServices() async {
+  Future<List<Service>> getServices({int page = 1, int limit = 10}) async {
     if (await networkInfo.isConnected) {
       try {
-        final remoteServices = await remoteDataSource.getServices();
-        await localDataSource.cacheServices(remoteServices);
+        final remoteServices = await remoteDataSource.getServices(
+          page: page,
+          limit: limit,
+        );
+
+       
+        // Only cache first page to avoid duplication
+        if (page == 1) {
+          await localDataSource.cacheServices(remoteServices);
+        }
+
         return remoteServices;
       } catch (e) {
         final localServices = await localDataSource.getCachedServices();
         if (localServices.isNotEmpty) {
-          return localServices;
+          // Implement local pagination
+          final start = (page - 1) * limit;
+          final end = start + limit;
+          return start < localServices.length
+              ? localServices.sublist(start, end.clamp(0, localServices.length))
+              : [];
         }
         rethrow;
       }
     } else {
       final localServices = await localDataSource.getCachedServices();
-      if (localServices.isNotEmpty) {
-        return localServices;
+      final start = (page - 1) * limit;
+      final end = start + limit;
+      if (start < localServices.length) {
+        return localServices.sublist(start, end.clamp(0, localServices.length));
       }
       throw Exception('No internet connection and no cached data available');
     }

@@ -3,7 +3,7 @@ import 'package:mini_service_booking_app/core/constants/api_constants.dart';
 import 'package:mini_service_booking_app/data/models/service_model.dart';
 
 abstract class ServiceRemoteDataSource {
-  Future<List<ServiceModel>> getServices();
+  Future<List<ServiceModel>> getServices({int page = 1, int limit = 10});
   Future<ServiceModel> getService(String id);
   Future<ServiceModel> addService(ServiceModel service);
   Future<ServiceModel> updateService(ServiceModel service);
@@ -16,8 +16,12 @@ class ServiceRemoteDataSourceImpl implements ServiceRemoteDataSource {
   ServiceRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<ServiceModel>> getServices() async {
-    final response = await dio.get(ApiConstants.servicesEndpoint);
+  Future<List<ServiceModel>> getServices({int page = 1, int limit = 10}) async {
+    final response = await dio.get(
+      '${ApiConstants.servicesEndpoint}'
+      // ?page=$page&limit=$limit',
+    );
+    print('${ApiConstants.servicesEndpoint}?page=$page&limit=$limit');
     return (response.data as List)
         .map((e) => ServiceModel.fromJson(e))
         .toList();

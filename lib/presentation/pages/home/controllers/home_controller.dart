@@ -1,9 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mini_service_booking_app/core/themes/app_colors.dart';
 import 'package:mini_service_booking_app/core/routes/app_pages.dart';
+import 'package:mini_service_booking_app/core/themes/app_colors.dart';
+import 'package:mini_service_booking_app/data/models/get_services_param.dart';
 import 'package:mini_service_booking_app/domain/entities/service.dart';
-import 'package:mini_service_booking_app/domain/usecases/base_usecase.dart';
 import 'package:mini_service_booking_app/domain/usecases/filter_service.dart';
 import 'package:mini_service_booking_app/domain/usecases/get_services.dart';
 import 'package:mini_service_booking_app/domain/usecases/search_service.dart';
@@ -34,6 +36,13 @@ class HomeController extends GetxController {
   final minRating = RxDouble(0);
   final favoriteServices = <String>[].obs;
   final itemsPerPage = 2.obs;
+  final allServices = <Service>[].obs; // All loaded services
+  final visibleServices = <Service>[].obs; // Currently displayed services
+  final isLoadingMore = false.obs;
+  final hasReachedMax = false.obs;
+  final int initialLoadCount = 2; // Initial number of services to load
+  final int paginationLoadCount = 5; // Number to load on each pagination
+
   // Add to HomeController class
   final promotionPageController = PageController(viewportFraction: 1).obs;
 
@@ -96,7 +105,8 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchServices();
+    // fetchServices();
+    loadInitialServices();
   }
 
   @override
@@ -106,22 +116,126 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
-  void searchServicess(String query) async {
-    if (query.isEmpty) {
-      filteredServices.assignAll(services);
-    } else {
-      // isLoading.value = true;
-      try {
-        final result = await searchServices.call(query);
-        filteredServices.assignAll(result);
-        currentPage.value = 1; // Reset to first page when searching
-      } catch (e) {
-        Get.snackbar('Error', 'Failed to search services');
-      } finally {
-        isLoading.value = false;
+  Future<void> loadInitialServices() async {
+    isLoading.value = true;
+    try {
+      final result = await getServices.call(
+        GetServicesParams(offset: 0, limit: initialLoadCount),
+      );
+
+      allServices.assignAll(result);
+      visibleServices.assignAll(result.take(initialLoadCount).toList());
+
+      if (result.length < initialLoadCount) {
+        hasReachedMax.value = true;
       }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load services');
+    } finally {
+      isLoading.value = false;
     }
   }
+
+  Future<void> loadMoreServices() async {
+    if (isLoadingMore.value || hasReachedMax.value) return;
+
+    isLoadingMore.value = true;
+    try {
+      // If we've exhausted cached services, fetch more from server
+      if (visibleServices.length >= allServices.length - paginationLoadCount) {
+        final newServices = await getServices.call(
+          GetServicesParams(
+            offset: allServices.length,
+            limit: paginationLoadCount,
+          ),
+        );
+
+        if (newServices.isEmpty) {
+          hasReachedMax.value = true;
+          return;
+        }
+
+        allServices.addAll(newServices);
+      }
+
+      // Determine how many more to show
+      final remaining = allServices.length - visibleServices.length;
+      final toShow = min(paginationLoadCount, remaining);
+
+      visibleServices.addAll(
+        allServices.sublist(
+          visibleServices.length,
+          visibleServices.length + toShow,
+        ),
+      );
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load more services');
+    } finally {
+      isLoadingMore.value = false;
+    }
+  }
+
+  void handleScroll(ScrollNotification scrollNotification) {
+    if (scrollNotification.metrics.pixels >=
+            scrollNotification.metrics.maxScrollExtent - 200 &&
+        !isLoadingMore.value &&
+        !hasReachedMax.value) {
+      loadMoreServices();
+    }
+  }
+
+  // Update your search and filter methods to work with the new lists
+  void searchServicess(String query) async {
+    if (query.isEmpty) {
+      visibleServices.assignAll(allServices.take(visibleServices.length));
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      final result = await searchServices.call(query);
+      allServices.assignAll(result);
+      visibleServices.assignAll(result.take(visibleServices.length));
+      hasReachedMax.value = false;
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to search services');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void filterByCategory(String? categoryId) {
+    selectedCategory.value = categoryId ?? '';
+
+    if (selectedCategory.value.isEmpty || selectedCategory.value == 'all') {
+      visibleServices.assignAll(allServices.take(visibleServices.length));
+    } else {
+      visibleServices.assignAll(
+        allServices
+            .where((service) => service.category == selectedCategory.value)
+            .take(visibleServices.length)
+            .toList(),
+      );
+    }
+    hasReachedMax.value = false;
+  }
+
+  // void searchServicess(String query) async {
+  //   if (query.isEmpty) {
+  //     filteredServices.assignAll(services);
+  //   } else {
+  //     // isLoading.value = true;
+  //     try {
+  //       final result = await searchServices.call(query);
+  //       filteredServices.assignAll(result);
+  //       currentPage.value = 1; // Reset to first page when searching
+  //     } catch (e) {
+  //       Get.snackbar('Error', 'Failed to search services');
+  //     } finally {
+  //       isLoading.value = false;
+  //     }
+  //   }
+  // }
 
   void toggleSearch() {
     isSearching.value = !isSearching.value;
@@ -131,27 +245,27 @@ class HomeController extends GetxController {
     }
   }
 
-  void filterByCategory(String? categoryId) {
-    selectedCategory.value = categoryId ?? '';
+  // void filterByCategory(String? categoryId) {
+  //   selectedCategory.value = categoryId ?? '';
 
-    if (selectedCategory.value.isEmpty || selectedCategory.value == 'all') {
-      // Show all services if "All" or empty is selected
-      filteredServices.assignAll(services);
-    } else {
-      // Filter existing services by category
-      filteredServices.assignAll(
-        services
-            .where(
-              (service) =>
-                  service.category.toLowerCase() ==
-                  selectedCategory.value.toLowerCase(),
-            )
-            .toList(),
-      );
-    }
+  //   if (selectedCategory.value.isEmpty || selectedCategory.value == 'all') {
+  //     // Show all services if "All" or empty is selected
+  //     filteredServices.assignAll(services);
+  //   } else {
+  //     // Filter existing services by category
+  //     filteredServices.assignAll(
+  //       services
+  //           .where(
+  //             (service) =>
+  //                 service.category.toLowerCase() ==
+  //                 selectedCategory.value.toLowerCase(),
+  //           )
+  //           .toList(),
+  //     );
+  //   }
 
-    currentPage.value = 1; // Reset to first page when filtering
-  }
+  //   currentPage.value = 1; // Reset to first page when filtering
+  // }
 
   // Remove the applyFilters method or modify it to work with existing data
   void applyFilters() {
@@ -205,7 +319,9 @@ class HomeController extends GetxController {
       currentPage.value = 1;
     }
     try {
-      final result = await getServices.call(NoParams());
+      final result = await getServices.call(
+        GetServicesParams(offset: 0, limit: initialLoadCount),
+      );
       if (currentPage.value == 1) {
         services.assignAll(result);
         filteredServices.assignAll(result);
@@ -263,15 +379,15 @@ class HomeController extends GetxController {
     // Get.toNamed(Routes.serviceDetails, arguments: id);
   }
 
-  void handleScroll(ScrollNotification scrollNotification) {
-    if (scrollNotification.metrics.pixels >=
-        scrollNotification.metrics.maxScrollExtent - 200) {
-      // Load more when 200px from bottom
-      if (hasNextPage && !isLoading.value) {
-        nextPage();
-      }
-    }
-  }
+  // void handleScroll(ScrollNotification scrollNotification) {
+  //   if (scrollNotification.metrics.pixels >=
+  //       scrollNotification.metrics.maxScrollExtent - 200) {
+  //     // Load more when 200px from bottom
+  //     if (hasNextPage && !isLoading.value) {
+  //       nextPage();
+  //     }
+  //   }
+  // }
 
   void navigateToAddService() {
     Get.toNamed(Routes.addService);

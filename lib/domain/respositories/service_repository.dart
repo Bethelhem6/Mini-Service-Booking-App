@@ -1,7 +1,7 @@
 import 'package:mini_service_booking_app/domain/entities/service.dart';
 
 abstract class ServiceRepository {
-  Future<List<Service>> getServices();
+  Future<List<Service>> getServices({int page = 1, int limit = 10});
   Future<Service> getService(String id);
   Future<void> addService(Service service);
   Future<void> updateService(Service service);
