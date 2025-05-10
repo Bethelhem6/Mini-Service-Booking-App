@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mini_service_booking_app/core/constants/app_colors.dart';
+import 'package:mini_service_booking_app/core/themes/app_colors.dart';
 import 'package:mini_service_booking_app/domain/entities/service.dart';
 import 'package:mini_service_booking_app/presentation/controllers/language_controller.dart';
+import 'package:mini_service_booking_app/presentation/controllers/theme_controller.dart';
 import 'package:mini_service_booking_app/presentation/pages/home/controllers/home_controller.dart';
 import 'package:mini_service_booking_app/presentation/pages/home/views/home_shimmer.dart';
 import 'package:mini_service_booking_app/presentation/pages/notification/view/notification_page.dart';
@@ -376,6 +377,8 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildDrawer(context) {
+    final themeController = Get.find<ThemeController>();
+    final theme = Theme.of(context);
     return Drawer(
       child: SafeArea(
         child: Column(
@@ -473,7 +476,19 @@ class HomeView extends GetView<HomeController> {
                     title: Text('logout'.tr),
                     onTap: controller.logout,
                   ),
-
+                  Obx(
+                    () => SwitchListTile(
+                      title: Text('Dark Mode'),
+                      secondary: Icon(
+                        themeController.isDarkMode.value
+                            ? Icons.dark_mode
+                            : Icons.light_mode,
+                        color: theme.primaryColor,
+                      ),
+                      value: themeController.isDarkMode.value,
+                      onChanged: (value) => themeController.toggleTheme(),
+                    ),
+                  ),
                   _buildLanguageTile(context),
                   const Spacer(),
                 ],

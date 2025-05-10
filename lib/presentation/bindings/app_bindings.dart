@@ -7,7 +7,7 @@ import 'package:mini_service_booking_app/core/network/network_info.dart';
 import 'package:mini_service_booking_app/data/datasources/service_local_data_source.dart';
 import 'package:mini_service_booking_app/data/datasources/service_remote_data_source.dart';
 import 'package:mini_service_booking_app/domain/respositories/service_repository.dart';
-import 'package:mini_service_booking_app/domain/respositories/service_repository_impl.dart';
+import 'package:mini_service_booking_app/data/repositories/service_repository_impl.dart';
 import 'package:mini_service_booking_app/domain/usecases/add_service.dart';
 import 'package:mini_service_booking_app/domain/usecases/delete_service.dart'
     show DeleteService;
