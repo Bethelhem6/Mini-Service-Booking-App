@@ -110,7 +110,7 @@ class HomeController extends GetxController {
     if (query.isEmpty) {
       filteredServices.assignAll(services);
     } else {
-      isLoading.value = true;
+      // isLoading.value = true;
       try {
         final result = await searchServices.call(query);
         filteredServices.assignAll(result);
