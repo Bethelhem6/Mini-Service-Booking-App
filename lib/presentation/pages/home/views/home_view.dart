@@ -344,7 +344,10 @@ class HomeView extends GetView<HomeController> {
                       (context, index) {
                         if (index >= controller.paginatedServices.length) {
                           return controller.hasNextPage
-                              ? const Center(child: CircularProgressIndicator())
+                              ? Container(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator(),
+                              )
                               : const SizedBox();
                         }
                         final service = controller.paginatedServices[index];

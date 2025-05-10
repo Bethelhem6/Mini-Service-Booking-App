@@ -28,12 +28,12 @@ class HomeController extends GetxController {
   final filteredServices = <Service>[].obs;
   final searchController = TextEditingController();
   final currentPage = 1.obs;
-  final itemsPerPage = 10.obs;
   final selectedCategory = RxString('');
   final minPrice = RxDouble(0);
   final maxPrice = RxDouble(1000);
   final minRating = RxDouble(0);
   final favoriteServices = <String>[].obs;
+  final itemsPerPage = 2.obs;
   // Add to HomeController class
   final promotionPageController = PageController(viewportFraction: 1).obs;
 
@@ -199,9 +199,10 @@ class HomeController extends GetxController {
   //   applyFilters();
   // }
 
-  Future<void> fetchServices() async {
-    if (currentPage.value == 1) {
+  Future<void> fetchServices({bool reset = false}) async {
+    if (reset || currentPage.value == 1) {
       isLoading.value = true;
+      currentPage.value = 1;
     }
     try {
       final result = await getServices.call(NoParams());
@@ -260,6 +261,16 @@ class HomeController extends GetxController {
       arguments: id, // or whatever you're passing
     );
     // Get.toNamed(Routes.serviceDetails, arguments: id);
+  }
+
+  void handleScroll(ScrollNotification scrollNotification) {
+    if (scrollNotification.metrics.pixels >=
+        scrollNotification.metrics.maxScrollExtent - 200) {
+      // Load more when 200px from bottom
+      if (hasNextPage && !isLoading.value) {
+        nextPage();
+      }
+    }
   }
 
   void navigateToAddService() {
