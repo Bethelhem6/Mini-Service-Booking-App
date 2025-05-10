@@ -133,8 +133,71 @@ class HomeController extends GetxController {
 
   void filterByCategory(String? categoryId) {
     selectedCategory.value = categoryId ?? '';
-    applyFilters();
+
+    if (selectedCategory.value.isEmpty || selectedCategory.value == 'all') {
+      // Show all services if "All" or empty is selected
+      filteredServices.assignAll(services);
+    } else {
+      // Filter existing services by category
+      filteredServices.assignAll(
+        services
+            .where(
+              (service) =>
+                  service.category.toLowerCase() ==
+                  selectedCategory.value.toLowerCase(),
+            )
+            .toList(),
+      );
+    }
+
+    currentPage.value = 1; // Reset to first page when filtering
   }
+
+  // Remove the applyFilters method or modify it to work with existing data
+  void applyFilters() {
+    isLoading.value = true;
+
+    try {
+      List<Service> result = services;
+
+      // Apply category filter
+      if (selectedCategory.value.isNotEmpty) {
+        result =
+            result
+                .where(
+                  (service) =>
+                      service.category.toLowerCase() ==
+                      selectedCategory.value.toLowerCase(),
+                )
+                .toList();
+      }
+
+      // Apply price filter
+      result =
+          result
+              .where(
+                (service) =>
+                    service.price >= minPrice.value &&
+                    service.price <= maxPrice.value,
+              )
+              .toList();
+
+      // Apply rating filter
+      result =
+          result.where((service) => service.rating >= minRating.value).toList();
+
+      filteredServices.assignAll(result);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to filter services');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // void filterByCategory(String? categoryId) {
+  //   selectedCategory.value = categoryId ?? '';
+  //   applyFilters();
+  // }
 
   Future<void> fetchServices() async {
     if (currentPage.value == 1) {
@@ -156,31 +219,31 @@ class HomeController extends GetxController {
     }
   }
 
-  void applyFilters() async {
-    if (currentPage.value == 1) {
-      isLoading.value = true;
-    }
-    try {
-      final result = await filterServices.call(
-        FilterServicesParams(
-          category:
-              selectedCategory.value.isEmpty ? null : selectedCategory.value,
-          minPrice: minPrice.value,
-          maxPrice: maxPrice.value,
-          minRating: minRating.value,
-        ),
-      );
-      if (currentPage.value == 1) {
-        filteredServices.assignAll(result);
-      } else {
-        filteredServices.addAll(result);
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to filter services');
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  // void applyFilters() async {
+  //   if (currentPage.value == 1) {
+  //     isLoading.value = true;
+  //   }
+  //   try {
+  //     final result = await filterServices.call(
+  //       FilterServicesParams(
+  //         category:
+  //             selectedCategory.value.isEmpty ? null : selectedCategory.value,
+  //         minPrice: minPrice.value,
+  //         maxPrice: maxPrice.value,
+  //         minRating: minRating.value,
+  //       ),
+  //     );
+  //     if (currentPage.value == 1) {
+  //       filteredServices.assignAll(result);
+  //     } else {
+  //       filteredServices.addAll(result);
+  //     }
+  //   } catch (e) {
+  //     Get.snackbar('Error', 'Failed to filter services');
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   void toggleFavorite(String serviceId) {
     if (favoriteServices.contains(serviceId)) {
@@ -340,6 +403,7 @@ class HomeController extends GetxController {
             ),
           ),
         ),
+
         actions: [
           TextButton(
             onPressed: () {
@@ -347,6 +411,7 @@ class HomeController extends GetxController {
               minPrice.value = 0;
               maxPrice.value = 1000;
               minRating.value = 0;
+              filteredServices.assignAll(services); // Reset to all services
               Get.back();
             },
             child: Text('Reset', style: TextStyle(color: Colors.grey[600])),
@@ -359,7 +424,7 @@ class HomeController extends GetxController {
               ),
             ),
             onPressed: () {
-              applyFilters();
+              applyFilters(); // This now works with existing data
               Get.back();
             },
             child: Text('Apply Filters', style: TextStyle(color: Colors.white)),

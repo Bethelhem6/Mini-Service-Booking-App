@@ -221,85 +221,86 @@ class HomeView extends GetView<HomeController> {
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 sliver: SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 100,
-                    child: Obx(
-                      () => ListView.builder(
+                  child: Obx(() {
+                    // This Obx will react to selectedCategory changes
+                    return SizedBox(
+                      height: 100,
+                      child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: controller.categories.length,
                         itemBuilder: (context, index) {
                           final category = controller.categories[index];
-                          final isSelected =
-                              controller.selectedCategory.value ==
-                                  category['id'] ||
-                              (controller.selectedCategory.value.isEmpty &&
-                                  category['id'] == 'all');
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: InkWell(
-                              onTap:
-                                  () => controller.filterByCategory(
-                                    (category['id'] == 'all'
-                                            ? null
-                                            : category['id'])
-                                        as String?,
-                                  ),
-                              borderRadius: BorderRadius.circular(12),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 64,
-                                    height: 64,
-                                    decoration: BoxDecoration(
-                                      color:
-                                          isSelected
-                                              ? primaryColor.withOpacity(0.1)
-                                              : Colors.grey[100],
-                                      borderRadius: BorderRadius.circular(12),
-                                      border:
-                                          isSelected
-                                              ? Border.all(
-                                                color: primaryColor,
-                                                width: 2,
-                                              )
-                                              : null,
-                                    ),
-                                    child: Icon(
-                                      category['icon'] as IconData?,
-                                      size: 30,
-                                      color:
-                                          isSelected
-                                              ? primaryColor
-                                              : Colors.grey[700],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    category['name'] as String,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight:
-                                          isSelected
-                                              ? FontWeight.bold
-                                              : FontWeight.normal,
-                                      color:
-                                          isSelected
-                                              ? primaryColor
-                                              : Colors.grey[700],
-                                    ),
-                                  ),
-                                ],
+                          return Obx(() {
+                            final isSelected =
+                                controller.selectedCategory.value ==
+                                    category['id'] ||
+                                (controller.selectedCategory.value.isEmpty &&
+                                    category['id'] == 'all');
+
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
                               ),
-                            ),
-                          );
+                              child: InkWell(
+                                onTap:
+                                    () => controller.filterByCategory(
+                                      category['id'] as String?,
+                                    ),
+                                borderRadius: BorderRadius.circular(12),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 64,
+                                      height: 64,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            isSelected
+                                                ? primaryColor.withOpacity(0.1)
+                                                : Colors.grey[100],
+                                        borderRadius: BorderRadius.circular(12),
+                                        border:
+                                            isSelected
+                                                ? Border.all(
+                                                  color: primaryColor,
+                                                  width: 2,
+                                                )
+                                                : null,
+                                      ),
+                                      child: Icon(
+                                        category['icon'] as IconData?,
+                                        size: 30,
+                                        color:
+                                            isSelected
+                                                ? primaryColor
+                                                : Colors.grey[700],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      category['name'] as String,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight:
+                                            isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                        color:
+                                            isSelected
+                                                ? primaryColor
+                                                : Colors.grey[700],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
                         },
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ),
-              ),
-
-              // Services Header
+              ), // Services Header
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 sliver: SliverToBoxAdapter(
@@ -497,7 +498,7 @@ Widget _buildLanguageTile(BuildContext context) {
     leading: const Icon(Icons.language),
     title: Text('language'.tr),
     children: [
-       RadioListTile(
+      RadioListTile(
         title: Text('english'.tr),
         value: 'en',
         groupValue: languageController.language,
@@ -507,7 +508,7 @@ Widget _buildLanguageTile(BuildContext context) {
           Navigator.pop(context);
         },
       ),
-    
+
       RadioListTile(
         title: Text('amharic'.tr),
         value: 'am',
