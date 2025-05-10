@@ -468,14 +468,7 @@ class HomeView extends GetView<HomeController> {
                     title: Text('settings'.tr),
                     onTap: () {},
                   ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.logout,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    title: Text('logout'.tr),
-                    onTap: controller.logout,
-                  ),
+                 
                   Obx(
                     () => SwitchListTile(
                       title: Text('Dark Mode'),
@@ -500,7 +493,7 @@ class HomeView extends GetView<HomeController> {
                 color: Theme.of(context).primaryColor,
               ),
               title: const Text('Logout'),
-              onTap: controller.logout,
+              // onTap: controller.logout,
             ),
           ],
         ),

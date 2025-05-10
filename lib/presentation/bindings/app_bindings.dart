@@ -23,13 +23,12 @@ import 'package:mini_service_booking_app/presentation/pages/home/controllers/hom
 class AppBindings extends Bindings {
   @override
   void dependencies() {
-    // 1. Initialize low-level dependencies first
+    // 1. Initialize core dependencies
     Get.lazyPut(() => DioClient());
     Get.lazyPut(() => Connectivity());
     Get.lazyPut<NetworkInfo>(() => NetworkInfoImpl(Get.find()));
 
     // 2. Initialize data sources
-    // Change this in AppBindings:
     Get.lazyPut<ServiceRemoteDataSource>(
       () => ServiceRemoteDataSourceImpl(dio: Get.find<DioClient>().dio),
     );
@@ -47,23 +46,22 @@ class AppBindings extends Bindings {
     );
 
     // 4. Initialize use cases
-    Get.lazyPut(() => GetServices(Get.find()));
-    Get.lazyPut(() => SearchServices(Get.find()));
-    Get.lazyPut(() => FilterServices(Get.find()));
-    Get.lazyPut(() => AddService(Get.find()));
+    Get.lazyPut(() => GetServices(Get.find<ServiceRepository>()));
+    Get.lazyPut(() => SearchServices(Get.find<ServiceRepository>()));
+    Get.lazyPut(() => FilterServices(Get.find<ServiceRepository>()));
     Get.lazyPut(() => AddService(Get.find<ServiceRepository>()));
     Get.lazyPut(() => UpdateService(Get.find<ServiceRepository>()));
     Get.lazyPut(() => GetService(Get.find<ServiceRepository>()));
     Get.lazyPut(() => DeleteService(Get.find<ServiceRepository>()));
 
     // 5. Initialize controllers
+    Get.lazyPut(() => LanguageController());
     Get.lazyPut(
       () => HomeController(
-        getServices: Get.find(),
-        searchServices: Get.find(),
-        filterServices: Get.find(),
+        getServices: Get.find<GetServices>(),
+        searchServices: Get.find<SearchServices>(),
+        filterServices: Get.find<FilterServices>(),
       ),
     );
-    Get.lazyPut(() => LanguageController());
   }
 }
