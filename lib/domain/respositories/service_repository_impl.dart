@@ -86,6 +86,7 @@ class ServiceRepositoryImpl implements ServiceRepository {
           rating: service.rating,
         );
         await remoteDataSource.addService(serviceModel);
+        await getServices();
         // Invalidate cache or update local storage
         await localDataSource.clearCache();
       } catch (e) {

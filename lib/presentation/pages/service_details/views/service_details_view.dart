@@ -10,17 +10,45 @@ class ServiceDetailsView extends GetView<ServiceDetailsController> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primaryColor = AppColors.primaryColor;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('serviceDetails'.tr),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.black54 : Colors.white54,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.arrow_back),
+          ),
+          onPressed: () => Get.back(),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.black54 : Colors.white54,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.edit, size: 20),
+            ),
             onPressed: () => controller.navigateToEditService(),
           ),
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.black54 : Colors.white54,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.delete, size: 20),
+            ),
             onPressed: () => controller.deleteServiceAction(),
           ),
         ],
@@ -35,109 +63,123 @@ class ServiceDetailsView extends GetView<ServiceDetailsController> {
           return Center(child: Text('serviceNotFound'.tr));
         }
 
-        return Stack(
+        return Column(
           children: [
-            CustomScrollView(
-              slivers: [
-                // Cover Image
-                SliverAppBar(
-                  expandedHeight: 250,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Hero(
-                      tag: 'service-image-${service.id}',
-                      child: Image.network(
-                        service.imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder:
-                            (context, error, stackTrace) => Container(
-                              color: Colors.grey[200],
-                              child: const Icon(Icons.image, size: 50),
-                            ),
-                      ),
-                    ),
-                  ),
-                  automaticallyImplyLeading: false,
-                  pinned: false,
-                  stretch: true,
-                ),
-
-                // Content
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      // Title and Rating Row
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              service.name,
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
+            // Hero Image Section
+            SizedBox(
+              height: 280,
+              child: Stack(
+                children: [
+                  Hero(
+                    tag: 'service-image-${service.id}',
+                    child: Image.network(
+                      service.imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                      errorBuilder:
+                          (context, error, stackTrace) => Container(
+                            color: Colors.grey[200],
+                            child: Center(
+                              child: Icon(
+                                Icons.image_not_supported,
+                                size: 50,
+                                color: Colors.grey[400],
                               ),
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.amber.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  service.rating.toStringAsFixed(1),
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 16,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
                       ),
-                      const SizedBox(height: 16),
-
-                      // Category and Duration
-                      Row(
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
                         children: [
-                          _DetailChip(
-                            icon: Icons.category,
-                            text: service.category,
-                            color: theme.colorScheme.secondaryContainer,
-                          ),
-                          const SizedBox(width: 8),
-                          _DetailChip(
-                            icon: Icons.timer,
-                            text: '${service.duration} min',
-                            color: theme.colorScheme.tertiaryContainer,
+                          const Icon(Icons.star, color: Colors.white, size: 16),
+                          const SizedBox(width: 4),
+                          Text(
+                            service.rating.toStringAsFixed(1),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-                      // Price
-                      Text(
-                        'ETB${service.price.toStringAsFixed(2)}',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          color: primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+            // Content Section
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title and Category
+                    Text(
+                      service.name,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 16),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      service.category.toUpperCase(),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: primaryColor,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
 
-                      // Availability
-                      Row(
+                    // Price and Duration
+                    Row(
+                      children: [
+                        _DetailPill(
+                          icon: Icons.schedule,
+                          text: '${service.duration} min',
+                          color: theme.colorScheme.primaryContainer,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'ETB ${service.price.toStringAsFixed(2)}',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            color: primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Availability
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            service.availability
+                                ? Colors.green.withOpacity(0.1)
+                                : Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
                         children: [
                           Icon(
                             service.availability
@@ -148,75 +190,72 @@ class ServiceDetailsView extends GetView<ServiceDetailsController> {
                                     ? Colors.green
                                     : Colors.red,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 12),
                           Text(
                             service.availability
-                                ? 'available'.tr
-                                : 'notAvailable'.tr,
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color:
-                                  service.availability
-                                      ? Colors.green
-                                      : Colors.red,
+                                ? 'Available for booking'
+                                : 'Currently unavailable',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                    ),
+                    const SizedBox(height: 24),
 
-                      // Description
-                      Text(
-                        'description'.tr,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    // About Service
+                    Text(
+                      'About this service',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 8),
-                      Text(service.category, style: theme.textTheme.bodyMedium),
-                      const SizedBox(height: 80), // Space for bottom button
-                    ]),
-                  ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 100), // Space for bottom button
+                  ],
                 ),
-              ],
+              ),
             ),
 
             // Fixed bottom button
-            Positioned(
-              bottom: 16,
-              left: 16,
-              right: 16,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: theme.scaffoldBackgroundColor,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, -4),
-                    ),
-                  ],
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                border: Border(
+                  top: BorderSide(
+                    color: theme.dividerColor.withOpacity(0.1),
+                    width: 1,
+                  ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryColor,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Text(
-                        'bookNow'.tr,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                  ),
+                  onPressed: () {},
+                  child: Text(
+                    'Book Now',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -229,12 +268,12 @@ class ServiceDetailsView extends GetView<ServiceDetailsController> {
   }
 }
 
-class _DetailChip extends StatelessWidget {
+class _DetailPill extends StatelessWidget {
   final IconData icon;
   final String text;
   final Color color;
 
-  const _DetailChip({
+  const _DetailPill({
     required this.icon,
     required this.text,
     required this.color,
@@ -242,11 +281,25 @@ class _DetailChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      avatar: Icon(icon, size: 18),
-      label: Text(text),
-      backgroundColor: color,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -55,31 +55,31 @@ class LoginController extends GetxController {
     await Future.delayed(const Duration(seconds: 1));
 
     // try {
-      // In a real app, this would be an actual API call
-      // if (usernameController.text == 'admin' &&
-      //     passwordController.text == '123456') {
-      //   // Save credentials if "remember me" is checked
-      //   if (rememberMe.value) {
-      //     await storage.write('rememberMe', true);
-      //     await storage.write('username', usernameController.text);
-      //     await storage.write('password', passwordController.text);
-      //   } else {
-      //     await storage.remove('rememberMe');
-      //     await storage.remove('username');
-      //     await storage.remove('password');
-      //   }
+    // In a real app, this would be an actual API call
+    // if (usernameController.text == 'admin' &&
+    //     passwordController.text == '123456') {
+    //   // Save credentials if "remember me" is checked
+    //   if (rememberMe.value) {
+    //     await storage.write('rememberMe', true);
+    //     await storage.write('username', usernameController.text);
+    //     await storage.write('password', passwordController.text);
+    //   } else {
+    //     await storage.remove('rememberMe');
+    //     await storage.remove('username');
+    //     await storage.remove('password');
+    //   }
 
-        Get.offAllNamed(Routes.home);
-        Get.snackbar(
-          'Success',
-          'Login successful',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-      // } else {
-      //   throw Exception('Invalid credentials');
-      // }
+    Get.offAllNamed(Routes.home);
+    Get.snackbar(
+      'Success',
+      'Login successful',
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
+    // } else {
+    //   throw Exception('Invalid credentials');
+    // }
     // } catch (e) {
     //   Get.snackbar(
     //     'Error',
