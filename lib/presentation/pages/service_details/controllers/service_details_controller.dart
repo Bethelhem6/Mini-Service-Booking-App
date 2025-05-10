@@ -4,6 +4,7 @@ import 'package:mini_service_booking_app/core/routes/app_pages.dart';
 import 'package:mini_service_booking_app/domain/entities/service.dart';
 import 'package:mini_service_booking_app/domain/usecases/delete_service.dart';
 import 'package:mini_service_booking_app/domain/usecases/get_service.dart';
+import 'package:mini_service_booking_app/presentation/pages/home/controllers/home_controller.dart';
 
 class ServiceDetailsController extends GetxController {
   final GetService getService;
@@ -30,7 +31,8 @@ class ServiceDetailsController extends GetxController {
       final result = await getService.call(serviceId);
       service.value = result;
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load service details');
+      Get.snackbar('Error', 'Failed to load service details',
+          backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
       isLoading.value = false;
     }
@@ -58,9 +60,21 @@ class ServiceDetailsController extends GetxController {
       try {
         await deleteService.call(serviceId); // Call the use case
         Get.back();
-        Get.snackbar('Success', 'Service deleted successfully');
+        Get.find<HomeController>().fetchServices();
+
+        Get.snackbar(
+          'Success',
+          'Service deleted successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
       } catch (e) {
-        Get.snackbar('Error', 'Failed to delete service');
+        Get.snackbar(
+          'Error',
+          'Failed to delete service',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     }
   }

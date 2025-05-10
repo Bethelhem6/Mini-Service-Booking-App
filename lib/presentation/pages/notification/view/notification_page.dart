@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mini_service_booking_app/core/constants/app_colors.dart';
 
 class NotificationsScreen extends StatelessWidget {
   final List<Map<String, dynamic>> notifications = [
@@ -40,7 +41,7 @@ class NotificationsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: const Text('Notifications', style: TextStyle(fontSize: 16)),
         centerTitle: false,
         actions: [
           TextButton(
@@ -51,6 +52,7 @@ class NotificationsScreen extends StatelessWidget {
               'Mark all as read',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
+                fontSize: 12,
               ),
             ),
           ),
@@ -66,6 +68,7 @@ class NotificationsScreen extends StatelessWidget {
                 'New',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
+                  fontSize: 14,
                   color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
@@ -86,7 +89,9 @@ class NotificationsScreen extends StatelessWidget {
           ),
 
           // Divider between sections
-          const SliverToBoxAdapter(child: Divider(height: 1, thickness: 1)),
+          const SliverToBoxAdapter(
+            child: Divider(height: 1, thickness: 1, color: AppColors.grey300),
+          ),
 
           // Earlier notifications section
           SliverToBoxAdapter(
@@ -96,6 +101,8 @@ class NotificationsScreen extends StatelessWidget {
                 'Earlier',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
+                  fontSize: 14,
+
                   color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
@@ -188,6 +195,8 @@ class NotificationItem extends StatelessWidget {
                         title,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w600,
+                          fontSize: 14,
+
                           color:
                               isUnread
                                   ? Theme.of(context).colorScheme.primary
@@ -221,6 +230,8 @@ class NotificationItem extends StatelessWidget {
                     message,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).hintColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

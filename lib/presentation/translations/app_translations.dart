@@ -19,10 +19,15 @@ class AppTranslations extends Translations {
       'spanish': 'Español',
       'promotions': 'Promotions',
       'addService': "Add Service",
-      'serviceDetails':'Service Details',
+      'serviceDetails': 'Service Details',
       'description': 'Description',
       'available': 'Available',
       'notAvailable': 'Not Available',
+      'editService': "Edit Service",
+      'confirmDelete': 'Confirm Delete',
+      'delete': 'Delete',
+      'deleteService': 'Delete Service',
+      'deleteServiceConfirm': 'Are you sure you want to delete this service?',
       // Service card translations
       'price': 'ETB@price',
       'rating': '@rating',
@@ -137,6 +142,7 @@ class AppTranslations extends Translations {
     'am_ET': {
       'serviceBooking': 'አገልግሎት ቦታ ማስያዝ',
       'addService': "Add Service",
+      'editService': "Edit Service",
       'searchServices': 'አገልግሎቶችን ፈልግ...',
       'categories': 'ምድቦች',
       'availableServices': 'የሚገኙ አገልግሎቶች',
@@ -261,7 +267,11 @@ class AppTranslations extends Translations {
       'available': 'Available',
       'notAvailable': 'Not Available',
       'amharic': 'አማርኛ',
-
+      'confirmDelete': 'Confirm Delete',
+      'delete': 'Delete',
+      'deleteService': 'Delete Service',
+      'deleteServiceConfirm': 'Are you sure you want to delete this service?',
+     
     },
   };
 }
