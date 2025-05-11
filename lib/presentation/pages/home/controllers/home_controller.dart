@@ -105,8 +105,8 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // fetchServices();
-    loadInitialServices();
+    fetchServices();
+    // loadInitialServices();
   }
 
   @override
@@ -184,58 +184,22 @@ class HomeController extends GetxController {
     }
   }
 
-  // Update your search and filter methods to work with the new lists
   void searchServicess(String query) async {
     if (query.isEmpty) {
-      visibleServices.assignAll(allServices.take(visibleServices.length));
-      return;
-    }
-
-    isLoading.value = true;
-    try {
-      final result = await searchServices.call(query);
-      allServices.assignAll(result);
-      visibleServices.assignAll(result.take(visibleServices.length));
-      hasReachedMax.value = false;
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to search services');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  void filterByCategory(String? categoryId) {
-    selectedCategory.value = categoryId ?? '';
-
-    if (selectedCategory.value.isEmpty || selectedCategory.value == 'all') {
-      visibleServices.assignAll(allServices.take(visibleServices.length));
+      filteredServices.assignAll(services);
     } else {
-      visibleServices.assignAll(
-        allServices
-            .where((service) => service.category == selectedCategory.value)
-            .take(visibleServices.length)
-            .toList(),
-      );
+      // isLoading.value = true;
+      try {
+        final result = await searchServices.call(query);
+        filteredServices.assignAll(result);
+        currentPage.value = 1; // Reset to first page when searching
+      } catch (e) {
+        Get.snackbar('Error', 'Failed to search services');
+      } finally {
+        isLoading.value = false;
+      }
     }
-    hasReachedMax.value = false;
   }
-
-  // void searchServicess(String query) async {
-  //   if (query.isEmpty) {
-  //     filteredServices.assignAll(services);
-  //   } else {
-  //     // isLoading.value = true;
-  //     try {
-  //       final result = await searchServices.call(query);
-  //       filteredServices.assignAll(result);
-  //       currentPage.value = 1; // Reset to first page when searching
-  //     } catch (e) {
-  //       Get.snackbar('Error', 'Failed to search services');
-  //     } finally {
-  //       isLoading.value = false;
-  //     }
-  //   }
-  // }
 
   void toggleSearch() {
     isSearching.value = !isSearching.value;
@@ -245,69 +209,29 @@ class HomeController extends GetxController {
     }
   }
 
-  // void filterByCategory(String? categoryId) {
-  //   selectedCategory.value = categoryId ?? '';
+  void filterByCategory(String? categoryId) {
+    selectedCategory.value = categoryId ?? '';
 
-  //   if (selectedCategory.value.isEmpty || selectedCategory.value == 'all') {
-  //     // Show all services if "All" or empty is selected
-  //     filteredServices.assignAll(services);
-  //   } else {
-  //     // Filter existing services by category
-  //     filteredServices.assignAll(
-  //       services
-  //           .where(
-  //             (service) =>
-  //                 service.category.toLowerCase() ==
-  //                 selectedCategory.value.toLowerCase(),
-  //           )
-  //           .toList(),
-  //     );
-  //   }
-
-  //   currentPage.value = 1; // Reset to first page when filtering
-  // }
-
-  // Remove the applyFilters method or modify it to work with existing data
-  void applyFilters() {
-    isLoading.value = true;
-
-    try {
-      List<Service> result = services;
-
-      // Apply category filter
-      if (selectedCategory.value.isNotEmpty) {
-        result =
-            result
-                .where(
-                  (service) =>
-                      service.category.toLowerCase() ==
-                      selectedCategory.value.toLowerCase(),
-                )
-                .toList();
-      }
-
-      // Apply price filter
-      result =
-          result
-              .where(
-                (service) =>
-                    service.price >= minPrice.value &&
-                    service.price <= maxPrice.value,
-              )
-              .toList();
-
-      // Apply rating filter
-      result =
-          result.where((service) => service.rating >= minRating.value).toList();
-
-      filteredServices.assignAll(result);
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to filter services');
-    } finally {
-      isLoading.value = false;
+    if (selectedCategory.value.isEmpty || selectedCategory.value == 'all') {
+      // Show all services if "All" or empty is selected
+      filteredServices.assignAll(services);
+    } else {
+      // Filter existing services by category
+      filteredServices.assignAll(
+        services
+            .where(
+              (service) =>
+                  service.category.toLowerCase() ==
+                  selectedCategory.value.toLowerCase(),
+            )
+            .toList(),
+      );
     }
+
+    currentPage.value = 1; // Reset to first page when filtering
   }
 
+  // Remove the applyFilters method or modify it to work with existing data
   // void filterByCategory(String? categoryId) {
   //   selectedCategory.value = categoryId ?? '';
   //   applyFilters();
@@ -336,31 +260,31 @@ class HomeController extends GetxController {
     }
   }
 
-  // void applyFilters() async {
-  //   if (currentPage.value == 1) {
-  //     isLoading.value = true;
-  //   }
-  //   try {
-  //     final result = await filterServices.call(
-  //       FilterServicesParams(
-  //         category:
-  //             selectedCategory.value.isEmpty ? null : selectedCategory.value,
-  //         minPrice: minPrice.value,
-  //         maxPrice: maxPrice.value,
-  //         minRating: minRating.value,
-  //       ),
-  //     );
-  //     if (currentPage.value == 1) {
-  //       filteredServices.assignAll(result);
-  //     } else {
-  //       filteredServices.addAll(result);
-  //     }
-  //   } catch (e) {
-  //     Get.snackbar('Error', 'Failed to filter services');
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
+  void applyFilters() async {
+    if (currentPage.value == 1) {
+      isLoading.value = true;
+    }
+    try {
+      final result = await filterServices.call(
+        FilterServicesParams(
+          category:
+              selectedCategory.value.isEmpty ? null : selectedCategory.value,
+          minPrice: minPrice.value,
+          maxPrice: maxPrice.value,
+          minRating: minRating.value,
+        ),
+      );
+      if (currentPage.value == 1) {
+        filteredServices.assignAll(result);
+      } else {
+        filteredServices.addAll(result);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to filter services');
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   void toggleFavorite(String serviceId) {
     if (favoriteServices.contains(serviceId)) {

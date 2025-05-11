@@ -45,7 +45,7 @@ class HomeView extends GetView<HomeController> {
       drawer: _buildDrawer(context),
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
-          controller.handleScroll(scrollNotification);
+          // controller.handleScroll(scrollNotification);
           return false;
         },
 
@@ -335,18 +335,18 @@ class HomeView extends GetView<HomeController> {
                           crossAxisCount: 2,
                           mainAxisSpacing: 16,
                           crossAxisSpacing: 16,
-                          childAspectRatio: .7,
+                          childAspectRatio: .65,
                         ),
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      if (index < controller.visibleServices.length) {
-                        final service = controller.visibleServices[index];
+                      if (index < controller.services.length) {
+                        final service = controller.services[index];
                         return ServiceCard(
                           service: service,
                           controller: controller,
                         );
                       }
                       return null;
-                    }, childCount: controller.visibleServices.length),
+                    }, childCount: controller.services.length),
                   ),
                 ),
               ),
@@ -609,7 +609,7 @@ class ServiceCard extends StatelessWidget {
                       service.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
