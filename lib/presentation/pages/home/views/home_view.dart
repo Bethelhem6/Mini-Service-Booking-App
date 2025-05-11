@@ -354,7 +354,7 @@ class HomeView extends GetView<HomeController> {
               // Add loading indicator at the bottom
               SliverToBoxAdapter(
                 child: Obx(() {
-                  return controller.isLoadingMore.value
+                  return controller.isLoading.value
                       ? const Padding(
                         padding: EdgeInsets.symmetric(vertical: 16),
                         child: Center(child: CircularProgressIndicator()),

@@ -1,11 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mini_service_booking_app/core/routes/app_pages.dart';
 import 'package:mini_service_booking_app/core/themes/app_colors.dart';
-import 'package:mini_service_booking_app/data/models/get_services_param.dart';
 import 'package:mini_service_booking_app/domain/entities/service.dart';
+import 'package:mini_service_booking_app/domain/usecases/base_usecase.dart';
 import 'package:mini_service_booking_app/domain/usecases/filter_service.dart';
 import 'package:mini_service_booking_app/domain/usecases/get_services.dart';
 import 'package:mini_service_booking_app/domain/usecases/search_service.dart';
@@ -30,19 +28,12 @@ class HomeController extends GetxController {
   final filteredServices = <Service>[].obs;
   final searchController = TextEditingController();
   final currentPage = 1.obs;
+  final itemsPerPage = 10.obs;
   final selectedCategory = RxString('');
   final minPrice = RxDouble(0);
   final maxPrice = RxDouble(1000);
   final minRating = RxDouble(0);
   final favoriteServices = <String>[].obs;
-  final itemsPerPage = 2.obs;
-  final allServices = <Service>[].obs; // All loaded services
-  final visibleServices = <Service>[].obs; // Currently displayed services
-  final isLoadingMore = false.obs;
-  final hasReachedMax = false.obs;
-  final int initialLoadCount = 2; // Initial number of services to load
-  final int paginationLoadCount = 5; // Number to load on each pagination
-
   // Add to HomeController class
   final promotionPageController = PageController(viewportFraction: 1).obs;
 
@@ -106,7 +97,6 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchServices();
-    // loadInitialServices();
   }
 
   @override
@@ -114,74 +104,6 @@ class HomeController extends GetxController {
     promotionPageController.value.dispose();
     searchController.dispose();
     super.onClose();
-  }
-
-  Future<void> loadInitialServices() async {
-    isLoading.value = true;
-    try {
-      final result = await getServices.call(
-        GetServicesParams(offset: 0, limit: initialLoadCount),
-      );
-
-      allServices.assignAll(result);
-      visibleServices.assignAll(result.take(initialLoadCount).toList());
-
-      if (result.length < initialLoadCount) {
-        hasReachedMax.value = true;
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load services');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> loadMoreServices() async {
-    if (isLoadingMore.value || hasReachedMax.value) return;
-
-    isLoadingMore.value = true;
-    try {
-      // If we've exhausted cached services, fetch more from server
-      if (visibleServices.length >= allServices.length - paginationLoadCount) {
-        final newServices = await getServices.call(
-          GetServicesParams(
-            offset: allServices.length,
-            limit: paginationLoadCount,
-          ),
-        );
-
-        if (newServices.isEmpty) {
-          hasReachedMax.value = true;
-          return;
-        }
-
-        allServices.addAll(newServices);
-      }
-
-      // Determine how many more to show
-      final remaining = allServices.length - visibleServices.length;
-      final toShow = min(paginationLoadCount, remaining);
-
-      visibleServices.addAll(
-        allServices.sublist(
-          visibleServices.length,
-          visibleServices.length + toShow,
-        ),
-      );
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load more services');
-    } finally {
-      isLoadingMore.value = false;
-    }
-  }
-
-  void handleScroll(ScrollNotification scrollNotification) {
-    if (scrollNotification.metrics.pixels >=
-            scrollNotification.metrics.maxScrollExtent - 200 &&
-        !isLoadingMore.value &&
-        !hasReachedMax.value) {
-      loadMoreServices();
-    }
   }
 
   void searchServicess(String query) async {
@@ -232,20 +154,57 @@ class HomeController extends GetxController {
   }
 
   // Remove the applyFilters method or modify it to work with existing data
+  void applyFilters() {
+    isLoading.value = true;
+
+    try {
+      List<Service> result = services;
+
+      // Apply category filter
+      if (selectedCategory.value.isNotEmpty) {
+        result =
+            result
+                .where(
+                  (service) =>
+                      service.category.toLowerCase() ==
+                      selectedCategory.value.toLowerCase(),
+                )
+                .toList();
+      }
+
+      // Apply price filter
+      result =
+          result
+              .where(
+                (service) =>
+                    service.price >= minPrice.value &&
+                    service.price <= maxPrice.value,
+              )
+              .toList();
+
+      // Apply rating filter
+      result =
+          result.where((service) => service.rating >= minRating.value).toList();
+
+      filteredServices.assignAll(result);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to filter services');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   // void filterByCategory(String? categoryId) {
   //   selectedCategory.value = categoryId ?? '';
   //   applyFilters();
   // }
 
-  Future<void> fetchServices({bool reset = false}) async {
-    if (reset || currentPage.value == 1) {
+  Future<void> fetchServices() async {
+    if (currentPage.value == 1) {
       isLoading.value = true;
-      currentPage.value = 1;
     }
     try {
-      final result = await getServices.call(
-        GetServicesParams(offset: 0, limit: initialLoadCount),
-      );
+      final result = await getServices.call(NoParams());
       if (currentPage.value == 1) {
         services.assignAll(result);
         filteredServices.assignAll(result);
@@ -260,31 +219,31 @@ class HomeController extends GetxController {
     }
   }
 
-  void applyFilters() async {
-    if (currentPage.value == 1) {
-      isLoading.value = true;
-    }
-    try {
-      final result = await filterServices.call(
-        FilterServicesParams(
-          category:
-              selectedCategory.value.isEmpty ? null : selectedCategory.value,
-          minPrice: minPrice.value,
-          maxPrice: maxPrice.value,
-          minRating: minRating.value,
-        ),
-      );
-      if (currentPage.value == 1) {
-        filteredServices.assignAll(result);
-      } else {
-        filteredServices.addAll(result);
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to filter services');
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  // void applyFilters() async {
+  //   if (currentPage.value == 1) {
+  //     isLoading.value = true;
+  //   }
+  //   try {
+  //     final result = await filterServices.call(
+  //       FilterServicesParams(
+  //         category:
+  //             selectedCategory.value.isEmpty ? null : selectedCategory.value,
+  //         minPrice: minPrice.value,
+  //         maxPrice: maxPrice.value,
+  //         minRating: minRating.value,
+  //       ),
+  //     );
+  //     if (currentPage.value == 1) {
+  //       filteredServices.assignAll(result);
+  //     } else {
+  //       filteredServices.addAll(result);
+  //     }
+  //   } catch (e) {
+  //     Get.snackbar('Error', 'Failed to filter services');
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   void toggleFavorite(String serviceId) {
     if (favoriteServices.contains(serviceId)) {
@@ -302,16 +261,6 @@ class HomeController extends GetxController {
     );
     // Get.toNamed(Routes.serviceDetails, arguments: id);
   }
-
-  // void handleScroll(ScrollNotification scrollNotification) {
-  //   if (scrollNotification.metrics.pixels >=
-  //       scrollNotification.metrics.maxScrollExtent - 200) {
-  //     // Load more when 200px from bottom
-  //     if (hasNextPage && !isLoading.value) {
-  //       nextPage();
-  //     }
-  //   }
-  // }
 
   void navigateToAddService() {
     Get.toNamed(Routes.addService);
@@ -393,105 +342,105 @@ class HomeController extends GetxController {
                   ),
                   const SizedBox(height: 20),
 
-                  // Price Range - Now reactive
-                  _FilterSection(
-                    title: 'Price Range (ETB)',
-                    child: Column(
-                      children: [
-                        RangeSlider(
-                          values: RangeValues(minPrice.value, maxPrice.value),
-                          min: 0,
-                          max: 1000,
-                          divisions: 20,
-                          activeColor: primaryColor,
-                          inactiveColor: Colors.grey[300],
-                          labels: RangeLabels(
-                            minPrice.value.toStringAsFixed(2),
-                            maxPrice.value.toStringAsFixed(2),
-                          ),
-                          onChanged: (values) {
-                            minPrice.value = values.start;
-                            maxPrice.value = values.end;
-                          },
+                // Price Range
+                _FilterSection(
+                  title: 'Price Range (ETB)',
+                  child: Column(
+                    children: [
+                      RangeSlider(
+                        values: RangeValues(minPrice.value, maxPrice.value),
+                        min: 0,
+                        max: 1000,
+                        divisions: 20,
+                        activeColor: primaryColor,
+                        inactiveColor: Colors.grey[300],
+                        labels: RangeLabels(
+                          minPrice.value.toStringAsFixed(2),
+                          maxPrice.value.toStringAsFixed(2),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('ETB ${minPrice.value.toStringAsFixed(2)}'),
-                            Text('ETB ${maxPrice.value.toStringAsFixed(2)}'),
-                          ],
-                        ),
-                      ],
-                    ),
+                        onChanged: (values) {
+                          minPrice.value = values.start;
+                          maxPrice.value = values.end;
+                        },
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('ETB ${minPrice.value.toStringAsFixed(2)}'),
+                          Text('ETB ${maxPrice.value.toStringAsFixed(2)}'),
+                        ],
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
+                ),
+                const SizedBox(height: 20),
 
-                  // Minimum Rating - Now reactive
-                  _FilterSection(
-                    title: 'Minimum Rating',
-                    child: Column(
-                      children: [
-                        Slider(
-                          value: minRating.value,
-                          min: 0,
-                          max: 5,
-                          divisions: 10,
-                          activeColor: primaryColor,
-                          inactiveColor: Colors.grey[300],
-                          label: minRating.value.toStringAsFixed(1),
-                          onChanged: (value) => minRating.value = value,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('0'),
-                            Text('5'),
-                            Text(
-                              'Selected: ${minRating.value.toStringAsFixed(1)}',
-                              style: TextStyle(color: primaryColor),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                // Minimum Rating
+                _FilterSection(
+                  title: 'Minimum Rating',
+                  child: Column(
+                    children: [
+                      Slider(
+                        value: minRating.value,
+                        min: 0,
+                        max: 5,
+                        divisions: 10,
+                        activeColor: primaryColor,
+                        inactiveColor: Colors.grey[300],
+                        label: minRating.value.toStringAsFixed(1),
+                        onChanged: (value) => minRating.value = value,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('0'),
+                          Text('5'),
+                          Text(
+                            'Selected: ${minRating.value.toStringAsFixed(1)}',
+                            style: TextStyle(color: primaryColor),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                selectedCategory.value = '';
-                minPrice.value = 0;
-                maxPrice.value = 1000;
-                minRating.value = 0;
-                filteredServices.assignAll(services);
-                Get.back();
-              },
-              child: Text('Reset', style: TextStyle(color: Colors.grey[600])),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () {
-                applyFilters();
-                Get.back();
-              },
-              child: Text(
-                'Apply Filters',
-                style: TextStyle(color: Colors.white),
+        ),
+
+        actions: [
+          TextButton(
+            onPressed: () {
+              selectedCategory.value = '';
+              minPrice.value = 0;
+              maxPrice.value = 1000;
+              minRating.value = 0;
+              filteredServices.assignAll(services); // Reset to all services
+              Get.back();
+            },
+            child: Text('Reset', style: TextStyle(color: Colors.grey[600])),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-          ],
+            onPressed: () {
+              applyFilters(); // This now works with existing data
+              Get.back();
+            },
+            child: Text('Apply Filters', style: TextStyle(color: Colors.white)),
+          ),
+        ],
         );
-      }),
+        }
+      )
     );
   }
+
   // List<String> _getUniqueCategories() {
   //   return services.map((s) => s.category).toSet().toList();
   // }
