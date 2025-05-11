@@ -1,6 +1,6 @@
 # Mini Service Booking App
 
-![App Screenshot](screenshots/app_demo.gif)
+![App Preview](assets/videos/app.gif)
 
 ## Project Overview
 A Flutter app for managing service bookings with full CRUD functionality, built using Clean Architecture and GetX for state management.
