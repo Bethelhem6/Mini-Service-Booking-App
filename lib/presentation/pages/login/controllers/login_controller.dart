@@ -47,50 +47,50 @@ class LoginController extends GetxController {
   }
 
   Future<void> login() async {
-    // if (!formKey.currentState!.validate()) return;
+    if (!formKey.currentState!.validate()) return;
 
     isLoading.value = true;
 
     // Simulate API call delay
     await Future.delayed(const Duration(seconds: 1));
 
-    // try {
-    // In a real app, this would be an actual API call
-    // if (usernameController.text == 'admin' &&
-    //     passwordController.text == '123456') {
-    //   // Save credentials if "remember me" is checked
-    //   if (rememberMe.value) {
-    //     await storage.write('rememberMe', true);
-    //     await storage.write('username', usernameController.text);
-    //     await storage.write('password', passwordController.text);
-    //   } else {
-    //     await storage.remove('rememberMe');
-    //     await storage.remove('username');
-    //     await storage.remove('password');
-    //   }
+    try {
+      // In a real app, this would be an actual API call
+      // if (usernameController.text == 'admin' &&
+      //     passwordController.text == '123456') {
+      //   // Save credentials if "remember me" is checked
+      //   if (rememberMe.value) {
+      //     await storage.write('rememberMe', true);
+      //     await storage.write('username', usernameController.text);
+      //     await storage.write('password', passwordController.text);
+      //   } else {
+      //     await storage.remove('rememberMe');
+      //     await storage.remove('username');
+      //     await storage.remove('password');
+      //   }
 
-    Get.offAllNamed(Routes.home);
-    Get.snackbar(
-      'Success',
-      'Login successful',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
-    // } else {
-    //   throw Exception('Invalid credentials');
-    // }
-    // } catch (e) {
-    //   Get.snackbar(
-    //     'Error',
-    //     'Invalid username or password',
-    //     snackPosition: SnackPosition.BOTTOM,
-    //     backgroundColor: Colors.red,
-    //     colorText: Colors.white,
-    //   );
-    // } finally {
-    //   isLoading.value = false;
-    // }
+        Get.offAllNamed(Routes.home);
+        Get.snackbar(
+          'Success',
+          'Login successful',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      // } else {
+      //   throw Exception('Invalid credentials');
+      // }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Invalid username or password',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void toggleRememberMe(bool? value) {
