@@ -589,7 +589,7 @@ class ServiceCard extends StatelessWidget {
                               : Icons.bookmark_outline,
                           color:
                               controller.favoriteServices.contains(service.id)
-                                  ? Colors.deepPurple
+                                  ? Colors.orange
                                   : Colors.grey,
                           size: 20,
                         ),
