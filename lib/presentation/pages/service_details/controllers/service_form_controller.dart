@@ -4,6 +4,7 @@ import 'package:mini_service_booking_app/domain/entities/service.dart';
 import 'package:mini_service_booking_app/domain/usecases/add_service.dart';
 import 'package:mini_service_booking_app/domain/usecases/update_service.dart';
 import 'package:mini_service_booking_app/presentation/pages/home/controllers/home_controller.dart';
+import 'package:mini_service_booking_app/presentation/pages/service_details/controllers/service_details_controller.dart';
 
 class ServiceFormController extends GetxController {
   final AddService addService;
@@ -118,6 +119,7 @@ class ServiceFormController extends GetxController {
       }
       // Notify HomeController to refresh
       Get.find<HomeController>().fetchServices();
+      Get.find<ServiceDetailsController>().fetchService();
     } catch (e) {
       Get.snackbar(
         'Error',

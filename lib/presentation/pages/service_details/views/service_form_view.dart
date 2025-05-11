@@ -78,7 +78,7 @@ class ServiceFormView extends GetView<ServiceFormController> {
                   value:
                       controller.selectedCategory.value.isEmpty
                           ? null
-                          : controller.selectedCategory.value,
+                          : controller.selectedCategory.value.capitalizeFirst,
                   decoration: InputDecoration(
                     hintText: 'Select category',
                     hintStyle: TextStyle(color: Colors.grey[400]),

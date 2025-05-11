@@ -110,7 +110,7 @@ class HomeController extends GetxController {
     if (query.isEmpty) {
       filteredServices.assignAll(services);
     } else {
-      // isLoading.value = true;
+      isLoading.value = true;
       try {
         final result = await searchServices.call(query);
         filteredServices.assignAll(result);
@@ -342,106 +342,106 @@ class HomeController extends GetxController {
                   ),
                   const SizedBox(height: 20),
 
-                // Price Range
-                _FilterSection(
-                  title: 'Price Range (ETB)',
-                  child: Column(
-                    children: [
-                      RangeSlider(
-                        values: RangeValues(minPrice.value, maxPrice.value),
-                        min: 0,
-                        max: 1000,
-                        divisions: 20,
-                        activeColor: primaryColor,
-                        inactiveColor: Colors.grey[300],
-                        labels: RangeLabels(
-                          minPrice.value.toStringAsFixed(2),
-                          maxPrice.value.toStringAsFixed(2),
-                        ),
-                        onChanged: (values) {
-                          minPrice.value = values.start;
-                          maxPrice.value = values.end;
-                        },
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('ETB ${minPrice.value.toStringAsFixed(2)}'),
-                          Text('ETB ${maxPrice.value.toStringAsFixed(2)}'),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Minimum Rating
-                _FilterSection(
-                  title: 'Minimum Rating',
-                  child: Column(
-                    children: [
-                      Slider(
-                        value: minRating.value,
-                        min: 0,
-                        max: 5,
-                        divisions: 10,
-                        activeColor: primaryColor,
-                        inactiveColor: Colors.grey[300],
-                        label: minRating.value.toStringAsFixed(1),
-                        onChanged: (value) => minRating.value = value,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('0'),
-                          Text('5'),
-                          Text(
-                            'Selected: ${minRating.value.toStringAsFixed(1)}',
-                            style: TextStyle(color: primaryColor),
+                  // Price Range
+                  _FilterSection(
+                    title: 'Price Range (ETB)',
+                    child: Column(
+                      children: [
+                        RangeSlider(
+                          values: RangeValues(minPrice.value, maxPrice.value),
+                          min: 0,
+                          max: 1000,
+                          divisions: 20,
+                          activeColor: primaryColor,
+                          inactiveColor: Colors.grey[300],
+                          labels: RangeLabels(
+                            minPrice.value.toStringAsFixed(2),
+                            maxPrice.value.toStringAsFixed(2),
                           ),
-                        ],
-                      ),
-                    ],
+                          onChanged: (values) {
+                            minPrice.value = values.start;
+                            maxPrice.value = values.end;
+                          },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('ETB ${minPrice.value.toStringAsFixed(2)}'),
+                            Text('ETB ${maxPrice.value.toStringAsFixed(2)}'),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
+                  const SizedBox(height: 20),
 
-        actions: [
-          TextButton(
-            onPressed: () {
-              selectedCategory.value = '';
-              minPrice.value = 0;
-              maxPrice.value = 1000;
-              minRating.value = 0;
-              filteredServices.assignAll(services); // Reset to all services
-              Get.back();
-            },
-            child: Text('Reset', style: TextStyle(color: Colors.grey[600])),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                  // Minimum Rating
+                  _FilterSection(
+                    title: 'Minimum Rating',
+                    child: Column(
+                      children: [
+                        Slider(
+                          value: minRating.value,
+                          min: 0,
+                          max: 5,
+                          divisions: 10,
+                          activeColor: primaryColor,
+                          inactiveColor: Colors.grey[300],
+                          label: minRating.value.toStringAsFixed(1),
+                          onChanged: (value) => minRating.value = value,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('0'),
+                            Text('5'),
+                            Text(
+                              'Selected: ${minRating.value.toStringAsFixed(1)}',
+                              style: TextStyle(color: primaryColor),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            onPressed: () {
-              applyFilters(); // This now works with existing data
-              Get.back();
-            },
-            child: Text('Apply Filters', style: TextStyle(color: Colors.white)),
           ),
-        ],
-        );
-        }
-      )
-    );
-  }
 
-  // List<String> _getUniqueCategories() {
+          actions: [
+            TextButton(
+              onPressed: () {
+                selectedCategory.value = '';
+                minPrice.value = 0;
+                maxPrice.value = 1000;
+                minRating.value = 0;
+                filteredServices.assignAll(services); // Reset to all services
+                Get.back();
+              },
+              child: Text('Reset', style: TextStyle(color: Colors.grey[600])),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                applyFilters(); // This now works with existing data
+                Get.back();
+              },
+              child: Text(
+                'Apply Filters',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      }),
+    );
+  } // List<String> _getUniqueCategories() {
   //   return services.map((s) => s.category).toSet().toList();
   // }
 

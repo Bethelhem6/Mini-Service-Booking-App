@@ -338,15 +338,17 @@ class HomeView extends GetView<HomeController> {
                           childAspectRatio: .65,
                         ),
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      if (index < controller.services.length) {
-                        final service = controller.services[index];
-                        return ServiceCard(
-                          service: service,
-                          controller: controller,
-                        );
-                      }
-                      return null;
-                    }, childCount: controller.services.length),
+                      // if (index >= controller.filteredServices.length) {
+                      //   return controller.hasNextPage
+                      //       ? const Center(child: CircularProgressIndicator())
+                      //       : const SizedBox();
+                      // }
+                      final service = controller.filteredServices[index];
+                      return ServiceCard(
+                        service: service,
+                        controller: controller,
+                      );
+                    }, childCount: controller.filteredServices.length),
                   ),
                 ),
               ),
